@@ -21,6 +21,7 @@ const NIGHT_BALL_COLOR = colorPalette.MysticMint;
 const SQUARE_SIZE = 25;
 const MIN_SPEED = 5;
 const MAX_SPEED = 10;
+const SPEED_INCREASE = 0.1;
 
 const numSquaresX = canvas.width / SQUARE_SIZE;
 const numSquaresY = canvas.height / SQUARE_SIZE;
@@ -103,17 +104,41 @@ function checkSquareCollision(ball) {
                 } else {
                     ball.dy = -ball.dy;
                 }
+
+                // Increase speed after collision, maintaining direction
+                const currentSpeedX = Math.abs(ball.dx);
+                const currentSpeedY = Math.abs(ball.dy);
+                const newSpeedX = Math.min(currentSpeedX + SPEED_INCREASE, MAX_SPEED);
+                const newSpeedY = Math.min(currentSpeedY + SPEED_INCREASE, MAX_SPEED);
+                
+                ball.dx = ball.dx > 0 ? newSpeedX : -newSpeedX;
+                ball.dy = ball.dy > 0 ? newSpeedY : -newSpeedY;
             }
         }
     }
 }
 
 function checkBoundaryCollision(ball) {
+    let collisionOccurred = false;
+    
     if (ball.x + ball.dx > canvas.width - SQUARE_SIZE / 2 || ball.x + ball.dx < SQUARE_SIZE / 2) {
         ball.dx = -ball.dx;
+        collisionOccurred = true;
     }
     if (ball.y + ball.dy > canvas.height - SQUARE_SIZE / 2 || ball.y + ball.dy < SQUARE_SIZE / 2) {
         ball.dy = -ball.dy;
+        collisionOccurred = true;
+    }
+    
+    // Increase speed after boundary collision
+    if (collisionOccurred) {
+        const currentSpeedX = Math.abs(ball.dx);
+        const currentSpeedY = Math.abs(ball.dy);
+        const newSpeedX = Math.min(currentSpeedX + SPEED_INCREASE, MAX_SPEED);
+        const newSpeedY = Math.min(currentSpeedY + SPEED_INCREASE, MAX_SPEED);
+        
+        ball.dx = ball.dx > 0 ? newSpeedX : -newSpeedX;
+        ball.dy = ball.dy > 0 ? newSpeedY : -newSpeedY;
     }
 }
 
